@@ -1,17 +1,55 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <h3>Example 1</h3>
+    <div>
+      Data: {{ example1 }}
+    </div>
+    <button @click="getLanguage">Get Language</button>
+    <hr>
+    <h3>Example 2</h3>
+    <div>
+        Data:
+        <div v-for="champion in champions">
+            {{ champion }}
+        </div>
+     </div>
+     <button @click="getChampions">Get Champions</button>
+      </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import axios from 'axios'
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data () {
+    return {
+      example1: '',
+      champions: []
+    }
+  },
+  methods: {
+    async getLanguage () {
+      try {
+        const res = await axios.post(
+          'http://localhost:4000/graphql', {
+          query: '{ language }'
+        })
+        this.example1 = res.data.data.language
+      } catch (e) {
+        //console.log('err', e)
+      }
+    },
+    async getChampions () {
+      const res = await axios.post(
+        'http://localhost:4000/graphql', {
+        query: `{
+          getChampions {
+            name
+          }
+        }`
+      })
+      this.champions = res.data.data
+    }
   }
 }
 </script>
